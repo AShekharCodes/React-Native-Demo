@@ -42,6 +42,7 @@ export default function TabsLayout() {
           marginBottom: 36,
           height: 52,
           position: "absolute",
+          borderColor: "#0F0D23",
           // overflow: "hidden",
         },
         animation: "shift",
@@ -58,22 +59,22 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="saved"
-        options={{
-          title: "Saved",
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.save} title="Saved" />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="search"
         options={{
           title: "Search",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
             <TabIcon focused={focused} icon={icons.search} title="Search" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="saved"
+        options={{
+          title: "Saved",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon focused={focused} icon={icons.save} title="Saved" />
           ),
         }}
       />
