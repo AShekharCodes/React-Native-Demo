@@ -7,12 +7,12 @@ import { icons } from "@/constants/icons";
 
 interface MovieInfoProps {
   label: string;
-  value?: string | number | null;
+  value?: React.ReactNode;
 }
 
 const MovieInfo = ({ label, value }: MovieInfoProps) => (
   <View className="flex-col items-start justify-center mt-5">
-    <Text className="text-light-200 font-normal text-sm">{label}</Text>
+    <Text className="font-semibold text-white">{label}</Text>
     <Text className="text-light-200 font-bold text-sm mt-2">
       {value || "N/A"}
     </Text>
@@ -24,6 +24,31 @@ const MovieDetails = () => {
   const { data: movie, loading } = useFetch(() =>
     fetchMovieDetails(id as string)
   );
+
+  const formatReleaseDate = (dateStr?: string) => {
+    if (!dateStr) return "Unknown";
+
+    const date = new Date(dateStr);
+    const day = date.getDate();
+    const month = date.toLocaleString("default", { month: "long" });
+    const year = date.getFullYear();
+
+    const getDaySuffix = (d: number) => {
+      if (d > 3 && d < 21) return "th";
+      switch (d % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    };
+
+    return `${day}${getDaySuffix(day)} ${month} ${year}`;
+  };
 
   return (
     <View className="bg-primary flex-1">
@@ -42,42 +67,92 @@ const MovieDetails = () => {
           />
         </View>
         <View className="flex-col items-start justify-center mt-5 px-5">
-          <Text className="text-white font-bold text-xl">{movie?.title}</Text>
-          <View className="flex-row items-center gap-x-1 mt-2">
-            <Text className="text-light-200 text-sm">
-              {movie?.release_date?.split("-")[0]}
-            </Text>
-            <Text className="text-light-200 text-sm">{movie?.runtime}m</Text>
+          <View className="w-full flex-row justify-between items-center">
+            <Text className="text-white font-bold text-xl">{movie?.title}</Text>
+            <View className="flex-row items-center bg-dark-100 px-2 py-1 rounded-md gap-x-1 mt-2">
+              <Image source={icons.star} className="size-4" />
+              <Text className="text-white font-bold text-sm">
+                {Math.round(movie?.vote_average ?? 0)}/10
+              </Text>
+              <Text className="text-light-200 text-sm ">
+                ({movie?.vote_count} votes)
+              </Text>
+            </View>
           </View>
-          <View className="flex-row items-center bg-dark-100 px-2 py-1 rounded-md gap-x-1 mt-2">
-            <Image source={icons.star} className="size-4" />
-            <Text className="text-white font-bold text-sm">
-              {Math.round(movie?.vote_average ?? 0)}/10
-            </Text>
-            <Text className="text-light-200 text-sm ">
-              ({movie?.vote_count} votes)
-            </Text>
+          <View className="flex flex-row justify-between gap-10">
+            <MovieInfo
+              label="Released"
+              value={formatReleaseDate(movie?.release_date)}
+            />
+            <MovieInfo
+              label="Runtime"
+              value={
+                movie?.runtime
+                  ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
+                  : "N/A"
+              }
+            />
           </View>
           <MovieInfo label="Overview" value={movie?.overview} />
           <MovieInfo
             label="Genres"
-            value={movie?.genres?.map((g) => g.name).join(" - ") || "N/A"}
+            value={
+              (movie?.genres ?? []).length > 0 ? (
+                <View className="flex-row flex-wrap gap-2">
+                  {(movie?.genres ?? []).map((g, index) => (
+                    <View
+                      key={index}
+                      className="flex-row items-center bg-dark-100 px-2 py-1 rounded-md gap-x-1 mt-2"
+                    >
+                      <Text className="text-light-200 font-bold text-sm">
+                        {g.name}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              ) : (
+                <Text className="text-light-200 text-sm">N/A</Text>
+              )
+            }
           />
-          <View className="flex flex-row justify-between w-1/2">
+
+          <View className="flex flex-row justify-between gap-10">
             <MovieInfo
               label="Budget"
-              value={`$${movie?.budget / 1_000_000} million`}
+              value={
+                movie?.budget
+                  ? `$${(movie.budget / 1_000_000).toFixed(1)} million`
+                  : "N/A"
+              }
             />
             <MovieInfo
               label="Revenue"
-              value={`$${Math.round(movie?.revenue) / 1_000_000}`}
+              value={
+                movie?.revenue
+                  ? `$${(movie.revenue / 1_000_000).toFixed(1)} million`
+                  : "N/A"
+              }
             />
           </View>
           <MovieInfo
             label="Production Companies"
             value={
-              movie?.production_companies.map((c) => c.name).join(" - ") ||
-              "N/A"
+              (movie?.production_companies ?? []).length > 0 ? (
+                <View className="flex-row flex-wrap gap-2">
+                  {(movie?.production_companies ?? []).map((p, index) => (
+                    <View
+                      key={index}
+                      className="flex-row items-center bg-dark-100 px-2 py-1 rounded-md gap-x-1 mt-2"
+                    >
+                      <Text className="text-light-300 font-bold text-sm">
+                        {p.name}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              ) : (
+                <Text className="text-light-200 text-sm">N/A</Text>
+              )
             }
           />
         </View>
