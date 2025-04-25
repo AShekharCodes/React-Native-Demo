@@ -43,7 +43,6 @@ export default function TabsLayout() {
           height: 52,
           position: "absolute",
           borderColor: "#0F0D23",
-          // overflow: "hidden",
         },
       }}
     >

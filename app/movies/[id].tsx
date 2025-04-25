@@ -121,7 +121,7 @@ const MovieDetails = () => {
               label="Budget"
               value={
                 movie?.budget
-                  ? `$${(movie.budget / 1_000_000).toFixed(1)} million`
+                  ? `$${(movie.budget / 1_000_000).toFixed(0)} million`
                   : "N/A"
               }
             />
@@ -129,7 +129,7 @@ const MovieDetails = () => {
               label="Revenue"
               value={
                 movie?.revenue
-                  ? `$${(movie.revenue / 1_000_000).toFixed(1)} million`
+                  ? `$${(movie.revenue / 1_000_000).toFixed(0)} million`
                   : "N/A"
               }
             />
